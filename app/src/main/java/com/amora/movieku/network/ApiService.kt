@@ -2,6 +2,7 @@ package com.amora.movieku.network
 
 import com.amora.movieku.data.model.network.MovieDetail
 import com.amora.movieku.data.model.network.MovieResponse
+import com.amora.movieku.data.model.network.MovieReviewsResponse
 import com.amora.movieku.data.model.network.MovieVideoResponse
 import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.GET
@@ -34,4 +35,9 @@ interface ApiService {
 	suspend fun getMovieVideos(
 		@Path("id") id: Long
 	): ApiResponse<MovieVideoResponse>
+
+	@GET("movie/{id}/reviews")
+	suspend fun getMovieReviews(
+		@Path("id") id: Long
+	): ApiResponse<MovieReviewsResponse>
 }

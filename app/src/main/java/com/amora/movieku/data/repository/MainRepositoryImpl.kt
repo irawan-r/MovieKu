@@ -7,6 +7,7 @@ import androidx.paging.PagingData
 import com.amora.movieku.data.model.network.ErrorResponse
 import com.amora.movieku.data.model.network.MovieDetail
 import com.amora.movieku.data.model.network.MovieResponse
+import com.amora.movieku.data.model.network.MovieReviewsResponse
 import com.amora.movieku.data.model.network.MovieVideoResponse
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
 import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
@@ -120,6 +121,33 @@ class MainRepositoryImpl @Inject constructor(
 		onError: (String) -> Unit
 	): Flow<MovieVideoResponse> = flow {
 		val getStory = apiService.getMovieVideos(idMovie)
+		getStory.suspendOnSuccess {
+			emit(data)
+			onSuccess(data)
+		}.onException {
+			onError(message())
+		}.onError {
+			val message: String? = try {
+				val errorMessageObj = Gson().fromJson(message(), ErrorResponse::class.java)
+				errorMessageObj.message?.replace("\"", "")
+			} catch (e: Exception) {
+				onError(e.message.toString())
+				null
+			}
+			if (message != null) {
+				onError(message)
+			}
+		}.onException {
+			onError(this.message.toString())
+		}
+	}.flowOn(Dispatchers.IO)
+
+	override fun movieReviews(
+		idMovie: Long,
+		onSuccess: (MovieReviewsResponse) -> Unit,
+		onError: (String) -> Unit
+	): Flow<MovieReviewsResponse> = flow {
+		val getStory = apiService.getMovieReviews(idMovie)
 		getStory.suspendOnSuccess {
 			emit(data)
 			onSuccess(data)

@@ -3,6 +3,7 @@ package com.amora.movieku.data.repository
 import androidx.paging.PagingData
 import com.amora.movieku.data.model.network.MovieDetail
 import com.amora.movieku.data.model.network.MovieResponse
+import com.amora.movieku.data.model.network.MovieReviewsResponse
 import com.amora.movieku.data.model.network.MovieVideoResponse
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
 import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
@@ -27,4 +28,9 @@ interface MainRepository {
 		idMovie: Long, onSuccess: (MovieVideoResponse) -> Unit,
 		onError: (String) -> Unit
 	): Flow<MovieVideoResponse>
+
+	fun movieReviews(
+		idMovie: Long, onSuccess: (MovieReviewsResponse) -> Unit,
+		onError: (String) -> Unit
+	): Flow<MovieReviewsResponse>
 }
