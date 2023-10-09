@@ -68,11 +68,13 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 			launch {
 				repeatOnLifecycle(Lifecycle.State.RESUMED) {
 					viewModel.getUpcomingMovies()
+					binding?.rvUpcomingMovies?.scrollToPosition(0)
 				}
 			}
 
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
 				viewModel.getUpcomingMovies()
+				binding?.rvUpcomingMovies?.scrollToPosition(0)
 				launch {
 					adapterMovies.loadStateFlow.onEach { loadStates ->
 						when {
