@@ -25,6 +25,7 @@ class UpcomingViewModel @Inject constructor(
 
 	private val _moviesState = MutableStateFlow<State<PagingData<Movie>>>(State.Empty())
 	val moviesState = _moviesState.asStateFlow()
+
 	fun resetState() {
 		_moviesState.update {
 			State.Empty()
@@ -34,6 +35,7 @@ class UpcomingViewModel @Inject constructor(
 	init {
 		getUpcomingMovies()
 	}
+
 	fun getUpcomingMovies() {
 		viewModelScope.launch {
 			repository.getUpcomingMovies().cachedIn(viewModelScope)

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amora.movieku.data.State
 import com.amora.movieku.data.model.network.MovieDetail
+import com.amora.movieku.data.model.network.MovieReviewsResponse
 import com.amora.movieku.data.model.network.MovieVideoResponse
 import com.amora.movieku.data.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,9 @@ class DetailViewModel @Inject constructor(
 	private val _moviesVideo = MutableStateFlow<State<MovieVideoResponse>>(State.Empty())
 	val moviesVideo = _moviesVideo.asStateFlow()
 
+	private val _moviesReviews = MutableStateFlow<State<MovieReviewsResponse>>(State.Empty())
+	val moviesReviews = _moviesReviews.asStateFlow()
+
 	fun resetVideoState() {
 		_moviesVideo.update {
 			State.Empty()
@@ -43,6 +47,7 @@ class DetailViewModel @Inject constructor(
 	init {
 		getMoviesPopular()
 		getMoviesVideo()
+		getMoviesReviews()
 	}
 
 	companion object {
@@ -52,13 +57,25 @@ class DetailViewModel @Inject constructor(
 	private fun getMoviesVideo() {
 		viewModelScope.launch {
 			val idDetail = savedStateHandle.get<Long>(ID_MOVIE) ?: 0L
-			println(idDetail)
 			repository.movieVideo(idDetail, onSuccess = { data ->
 				_moviesVideo.update { State.Success(data) }
 			}) { msg ->
 				_moviesVideo.update { State.Error(msg) }
 			}
 				.onStart { _moviesVideo.update { State.Loading() } }
+				.collect()
+		}
+	}
+
+	private fun getMoviesReviews() {
+		viewModelScope.launch {
+			val idDetail = savedStateHandle.get<Long>(ID_MOVIE) ?: 0L
+			repository.movieReviews(idDetail, onSuccess = { data ->
+				_moviesReviews.update { State.Success(data) }
+			}) { msg ->
+				_moviesReviews.update { State.Error(msg) }
+			}
+				.onStart { _moviesReviews.update { State.Loading() } }
 				.collect()
 		}
 	}

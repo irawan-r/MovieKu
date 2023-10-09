@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -24,6 +25,8 @@ import com.amora.movieku.ui.detail.DetailViewModel
 import com.amora.movieku.utils.showSnackbarNotice
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -53,16 +56,6 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 		(requireActivity() as MainActivity).setUpcomingFragment(this)
 	}
 
-	fun scrollToTop() {
-		val smoothScroller = object : LinearSmoothScroller(context) {
-			override fun getVerticalSnapPreference(): Int {
-				return SNAP_TO_START
-			}
-		}
-		smoothScroller.targetPosition = 0
-		binding?.rvUpcomingMovies?.layoutManager?.startSmoothScroll(smoothScroller)
-	}
-
 	private fun loadingState(toggle: Boolean) {
 		binding?.apply {
 			progressBar.isVisible = toggle
@@ -74,7 +67,6 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 			launch {
 				repeatOnLifecycle(Lifecycle.State.RESUMED) {
 					viewModel.getUpcomingMovies()
-					scrollToTop()
 				}
 			}
 
@@ -106,6 +98,12 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 									lifecycle,
 									state.data ?: PagingData.empty()
 								)
+								// to make the newer data from pagination will make the recyclerview scrolled to newer data position
+								adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
+									old.prepend.endOfPaginationReached == new.prepend.endOfPaginationReached
+								}
+									.filter { it.refresh is LoadState.NotLoading && it.prepend.endOfPaginationReached }
+									.collect { binding?.rvUpcomingMovies?.scrollToPosition(0) }
 							}
 
 							else -> {

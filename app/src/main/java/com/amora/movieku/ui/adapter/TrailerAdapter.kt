@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.amora.movieku.BuildConfig
 import com.amora.movieku.data.model.network.VideoMovie
-import com.amora.movieku.databinding.AnimeTrailerItemBinding
+import com.amora.movieku.databinding.MoviesTrailerItemBinding
 import com.bumptech.glide.Glide
+
 
 class TrailerAdapter(private val clickListener: TrailerListener, private val context: Context) :
     ListAdapter<VideoMovie, TrailerAdapter.TrailerViewHolder>(TrailerDiffCallback) {
@@ -25,7 +25,7 @@ class TrailerAdapter(private val clickListener: TrailerListener, private val con
     }
 
     class TrailerViewHolder(
-        var binding: AnimeTrailerItemBinding,
+        var binding: MoviesTrailerItemBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(clickListener: TrailerListener, data: VideoMovie) {
             binding.root.setOnClickListener {
@@ -44,7 +44,7 @@ class TrailerAdapter(private val clickListener: TrailerListener, private val con
     ): TrailerViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return TrailerViewHolder(
-            AnimeTrailerItemBinding.inflate(layoutInflater, parent, false)
+            MoviesTrailerItemBinding.inflate(layoutInflater, parent, false)
         )
     }
 

@@ -106,12 +106,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 			}
 
 			else -> {
-				if (destination.id == R.id.navigation_popular) {
-					popularFragment?.scrollToTop()
-				}
-				if (destination.id == R.id.navigation_upcoming) {
-					upcomingFragment?.scrollToTop()
-				}
 				setToolbarVisibility()
 				supportToolBar(true)
 				enableBackPressExit()

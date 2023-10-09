@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -26,6 +27,8 @@ import com.amora.movieku.utils.showSnackbarNotice
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -48,6 +51,9 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 			rvPopularMovies.adapter = adapterMovies.withLoadStateFooter(
 				footer = LoadingStateAdapter { adapterMovies.retry() }
 			)
+			swipeRefresh.setOnRefreshListener {
+				viewModel.getMoviesPopular()
+			}
 		}
 		(requireActivity() as MainActivity).setPopularFragment(this)
 	}
@@ -57,7 +63,6 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 			launch {
 				repeatOnLifecycle(Lifecycle.State.RESUMED) {
 					viewModel.getMoviesPopular()
-					scrollToTop()
 				}
 			}
 
@@ -71,6 +76,7 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 
 							is State.Error -> {
 								loadingState(false)
+								binding?.swipeRefresh?.isRefreshing = false
 								val messageApi = state.data.toString()
 								val message = state.message
 								if (message != null) {
@@ -82,7 +88,15 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 
 							is State.Success -> {
 								loadingState(false)
+								binding?.swipeRefresh?.isRefreshing = false
 								adapterMovies.submitData(lifecycle, state.data ?: PagingData.empty())
+
+								// to make the newer data from pagination will make the recyclerview scrolled to newer data position
+								adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
+									old.prepend.endOfPaginationReached == new.prepend.endOfPaginationReached
+								}
+									.filter { it.refresh is LoadState.NotLoading && it.prepend.endOfPaginationReached }
+									.collect { binding?.rvPopularMovies?.scrollToPosition(0) }
 							}
 
 							else -> {
@@ -101,16 +115,6 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 		binding?.apply {
 			progressBar.isVisible = toggle
 		}
-	}
-
-	fun scrollToTop() {
-		val smoothScroller = object : LinearSmoothScroller(context) {
-			override fun getVerticalSnapPreference(): Int {
-				return SNAP_TO_START
-			}
-		}
-		smoothScroller.targetPosition = 0
-		binding?.rvPopularMovies?.layoutManager?.startSmoothScroll(smoothScroller)
 	}
 
 	override fun onItemClick(item: Movie) {
