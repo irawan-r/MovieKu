@@ -31,7 +31,7 @@ Here's a peek into the technology that powers the magic:
 
 - **Glide:** The go-to image loading library for MovieKu, ensuring quick and efficient loading of captivating movie images.
 
-- **Material Components:** Bringing the beauty of Material Design to MovieKu with a collection of ready-to-use, customizable components.
+- **Material3 Components:** Bringing the beauty of Material Design to MovieKu with a collection of ready-to-use, customizable components.
 
 Explore MovieKu and dive into the world of movies with a tech stack designed for a delightful cinematic experience!
 
