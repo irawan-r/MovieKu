@@ -89,7 +89,6 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 								// Handle error state
 								// You can show an error message or perform error-related actions
 								loadingState(false)
-								binding?.root?.showSnackbarNotice("Error loading data. Please try again.")
 							}
 						}
 					}.launchIn(lifecycleScope)

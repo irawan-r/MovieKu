@@ -27,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -73,12 +74,28 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
 				viewModel.getUpcomingMovies()
 				launch {
-					// to make the newer data from pagination will make the recyclerview scrolled to newer data position
-					adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
-						old.prepend.endOfPaginationReached == new.prepend.endOfPaginationReached
-					}
-						.filter { it.refresh is LoadState.NotLoading && it.prepend.endOfPaginationReached }
-						.collect { binding?.rvUpcomingMovies?.scrollToPosition(0) }
+					adapterMovies.loadStateFlow.onEach { loadStates ->
+						when {
+							// Loading state
+							loadStates.mediator?.refresh is LoadState.Loading -> {
+								// Handle loading state
+								// You can show a loading indicator, for example
+								loadingState(true)
+							}
+							// Finished state
+							loadStates.mediator?.refresh is LoadState.NotLoading -> {
+								// Handle finished state
+								// You can hide the loading indicator or perform any other actions
+								loadingState(false)
+							}
+							// Error state
+							loadStates.mediator?.refresh is LoadState.Error -> {
+								// Handle error state
+								// You can show an error message or perform error-related actions
+								loadingState(false)
+							}
+						}
+					}.launchIn(lifecycleScope)
 				}
 
 				launch {
