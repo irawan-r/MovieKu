@@ -29,6 +29,8 @@ Here's a peek into the technology that powers the magic:
 
 - **OkHttp3:** The logging interceptor in OkHttp3 helps keep a close eye on network activities, ensuring smooth communication with the backend.
 
+- **Paging 3:** Managing and loading large data sets efficiently with Paging 3 for a smooth and optimized user experience.
+
 - **Glide:** The go-to image loading library for MovieKu, ensuring quick and efficient loading of captivating movie images.
 
 - **Material3 Components:** Bringing the beauty of Material Design to MovieKu with a collection of ready-to-use, customizable components.
