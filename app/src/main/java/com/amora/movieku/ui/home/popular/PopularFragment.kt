@@ -59,7 +59,14 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 	override fun initObserver() {
 		lifecycleScope.launch {
 
+			launch {
+				repeatOnLifecycle(Lifecycle.State.RESUMED) {
+					viewModel.getMoviesPopular()
+				}
+			}
+
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
+				viewModel.getMoviesPopular()
 				launch {
 					adapterMovies.loadStateFlow.onEach { loadStates ->
 						when {

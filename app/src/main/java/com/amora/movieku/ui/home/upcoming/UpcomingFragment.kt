@@ -71,7 +71,7 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 			}
 
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
-
+				viewModel.getUpcomingMovies()
 				launch {
 					// to make the newer data from pagination will make the recyclerview scrolled to newer data position
 					adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
