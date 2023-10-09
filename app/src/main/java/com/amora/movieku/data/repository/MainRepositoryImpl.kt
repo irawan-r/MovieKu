@@ -15,6 +15,7 @@ import com.amora.movieku.data.persistence.AppDatabase
 import com.amora.movieku.network.ApiService
 import com.amora.movieku.data.repository.remotemediator.popular.PopularRemoteMediator
 import com.amora.movieku.data.repository.remotemediator.upcoming.UpcomingRemoteMediator
+import com.google.android.material.color.utilities.MaterialDynamicColors.onError
 import com.google.gson.Gson
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
@@ -34,7 +35,7 @@ class MainRepositoryImpl @Inject constructor(
 	private val database: AppDatabase
 ) : MainRepository {
 	@OptIn(ExperimentalPagingApi::class)
-	override fun getPopularMovies(onError: (String) -> Unit): Flow<PagingData<MoviePopularEntity>> =
+	override fun getPopularMovies(): Flow<PagingData<MoviePopularEntity>> =
 		flow {
 			val pager = Pager(
 				config = PagingConfig(pageSize = 10),
@@ -43,9 +44,6 @@ class MainRepositoryImpl @Inject constructor(
 					database.movieDao().getMoviesPopularList()
 				}
 			).flow
-				.catch {
-					onError(it.message.toString())
-				}
 			emitAll(pager)
 		}
 

@@ -32,10 +32,6 @@ class UpcomingViewModel @Inject constructor(
 		}
 	}
 
-	init {
-		getUpcomingMovies()
-	}
-
 	fun getUpcomingMovies() {
 		viewModelScope.launch {
 			repository.getUpcomingMovies().cachedIn(viewModelScope)

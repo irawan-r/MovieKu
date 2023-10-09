@@ -10,7 +10,7 @@ import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
-	fun getPopularMovies(onError: (String) -> Unit): Flow<PagingData<MoviePopularEntity>>
+	fun getPopularMovies(): Flow<PagingData<MoviePopularEntity>>
 
 	fun getUpcomingMovies(): Flow<PagingData<MovieUpcomingEntity>>
 

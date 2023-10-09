@@ -34,27 +34,11 @@ class PopularViewModel @Inject constructor(
 		}
 	}
 
-	init {
-		getMoviesPopular()
-	}
-
 	fun getMoviesPopular() {
 		viewModelScope.launch {
-			repository.getPopularMovies(onError = { msg ->
-				_moviesState.update { State.Error(msg) }
-			}).cachedIn(viewModelScope)
+			repository.getPopularMovies().cachedIn(viewModelScope)
 				.onStart { _moviesState.update { State.Loading() } }
 				.onEmpty { _moviesState.update { State.Loading() } }
-				.catch { exception ->
-					if (exception is IOException) {
-						val message = exception.message
-						if (message != null) {
-							_moviesState.update { State.Error(message) }
-						}
-					} else {
-						exception.message?.let { msg -> _moviesState.update { State.Error(message = msg) } }
-					}
-				}
 				.collect { response ->
 					_moviesState.update {
 						val data = response.map { it.toMovie() }
