@@ -118,6 +118,7 @@ class DetailFragment : BaseFragment<FragmentDetailBinding, DetailViewModel>() {
             tvRating.isVisible = !isVisible
             tvPopularity.isVisible = !isVisible
             tvReview.isVisible = !isVisible
+            tvTitleReviews.isVisible = !isVisible
         }
     }
 

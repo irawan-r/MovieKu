@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.amora.movieku.data.model.network.ResultsItem
 import com.amora.movieku.databinding.MoviesReviewsItemBinding
-import com.amora.movieku.databinding.MoviesTrailerItemBinding
 
 
 class ReviewAdapter :
@@ -42,7 +41,7 @@ class ReviewAdapter :
     override fun onBindViewHolder(holder: ReviewAdapter.ItemAdapterReviews, position: Int) {
         val item = differ.currentList[position]
         holder.binding.apply {
-            ratingValue.text = item.authorDetails?.rating.toString()
+            ratingValue.text = (item.author_details?.rating ?: 0.0).toString()
             tvAuthor.text = item.author
             textView.text = item.content
         }

@@ -83,7 +83,6 @@ class DetailViewModel @Inject constructor(
 	private fun getMoviesPopular() {
 		viewModelScope.launch {
 			val idDetail = savedStateHandle.get<Long>(ID_MOVIE) ?: 0L
-			println(idDetail)
 			repository.movieDetail(idDetail, onSuccess = { data ->
 				_moviesState.update { State.Success(data) }
 			}, onError = { msg ->

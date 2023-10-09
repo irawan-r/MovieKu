@@ -11,7 +11,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.amora.movieku.MainActivity
 import com.amora.movieku.R
@@ -21,21 +20,20 @@ import com.amora.movieku.databinding.FragmentPopularBinding
 import com.amora.movieku.ui.adapter.LoadingStateAdapter
 import com.amora.movieku.ui.adapter.PagingMoviesAdapter
 import com.amora.movieku.ui.base.BaseFragment
-import com.amora.movieku.ui.detail.DetailFragment
 import com.amora.movieku.ui.detail.DetailViewModel
 import com.amora.movieku.utils.showSnackbarNotice
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 @AndroidEntryPoint
-class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>(), PagingMoviesAdapter.OnItemClickListener {
+class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>(),
+	PagingMoviesAdapter.OnItemClickListener {
 	override val inflateBinding: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPopularBinding
 		get() = FragmentPopularBinding::inflate
 	override val viewModel: PopularViewModel by viewModels()
@@ -68,44 +66,66 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
 				launch {
-					viewModel.moviesState.onEach { state ->
-						when (state) {
-							is State.Loading -> {
+					adapterMovies.loadStateFlow.onEach { loadStates ->
+						when {
+							// Loading state
+							loadStates.mediator?.refresh is LoadState.Loading -> {
+								// Handle loading state
+								// You can show a loading indicator, for example
 								loadingState(true)
 							}
-
-							is State.Error -> {
+							// Finished state
+							loadStates.mediator?.refresh is LoadState.NotLoading -> {
+								// Handle finished state
+								// You can hide the loading indicator or perform any other actions
 								loadingState(false)
-								binding?.swipeRefresh?.isRefreshing = false
-								val messageApi = state.data.toString()
-								val message = state.message
-								if (message != null) {
-									binding?.root?.showSnackbarNotice(message)
-								} else {
-									binding?.root?.showSnackbarNotice(messageApi)
-								}
 							}
-
-							is State.Success -> {
+							// Error state
+							loadStates.mediator?.refresh is LoadState.Error -> {
+								// Handle error state
+								// You can show an error message or perform error-related actions
 								loadingState(false)
-								binding?.swipeRefresh?.isRefreshing = false
-								adapterMovies.submitData(lifecycle, state.data ?: PagingData.empty())
-
-								// to make the newer data from pagination will make the recyclerview scrolled to newer data position
-								adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
-									old.prepend.endOfPaginationReached == new.prepend.endOfPaginationReached
-								}
-									.filter { it.refresh is LoadState.NotLoading && it.prepend.endOfPaginationReached }
-									.collect { binding?.rvPopularMovies?.scrollToPosition(0) }
-							}
-
-							else -> {
-								loadingState(false)
+								binding?.root?.showSnackbarNotice("Error loading data. Please try again.")
 							}
 						}
-					}.onCompletion {
-						viewModel.resetState()
-					}.collect()
+					}.launchIn(lifecycleScope)
+				}
+
+				launch {
+					viewModel.moviesState.onEach { state ->
+							when (state) {
+								is State.Loading -> {
+
+								}
+
+								is State.Error -> {
+
+									binding?.swipeRefresh?.isRefreshing = false
+									val messageApi = state.data.toString()
+									val message = state.message
+									if (message != null) {
+										binding?.root?.showSnackbarNotice(message)
+									} else {
+										binding?.root?.showSnackbarNotice(messageApi)
+									}
+								}
+
+								is State.Success -> {
+									binding?.swipeRefresh?.isRefreshing = false
+									adapterMovies.submitData(
+										lifecycle,
+										state.data ?: PagingData.empty()
+									)
+								}
+
+								else -> {
+
+								}
+							}
+						}
+						.onCompletion {
+							viewModel.resetState()
+						}.collect()
 				}
 			}
 		}

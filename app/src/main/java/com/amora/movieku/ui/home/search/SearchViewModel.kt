@@ -13,6 +13,7 @@ import com.amora.movieku.data.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
@@ -42,6 +43,9 @@ class SearchViewModel @Inject constructor(
 				_moviesState.update { State.Error(msg) }
 			}).onStart { _moviesState.update { State.Loading() } }
 				.onEmpty { _moviesState.update { State.Loading() } }
+				.catch {error ->
+					_moviesState.update { State.Error(error.localizedMessage) }
+				}
 				.collect()
 		}
 	}

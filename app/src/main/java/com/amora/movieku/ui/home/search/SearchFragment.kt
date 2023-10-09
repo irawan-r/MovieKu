@@ -17,6 +17,7 @@ import com.amora.movieku.ui.base.BaseFragment
 import com.amora.movieku.ui.detail.DetailViewModel
 import com.amora.movieku.utils.showSnackbarNotice
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onCompletion
@@ -108,6 +109,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(),
 						loadingState(false)
 					}
 				}
+			}.catch {
+				loadingState(false)
 			}.onCompletion {
 				viewModel.resetState()
 				loadingState(false)

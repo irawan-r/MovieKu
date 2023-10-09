@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.io.IOException
 import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
@@ -84,7 +85,13 @@ class MainRepositoryImpl @Inject constructor(
 				onError(message)
 			}
 		}.onException {
-			onError(this.message.toString())
+			if (exception is IOException) {
+				// Handle network-related errors
+				onError("Unable to connect to the server. Please check your internet connection.")
+			} else {
+				// Handle other types of errors
+				onError("An unexpected error occurred.")
+			}
 		}
 	}.flowOn(Dispatchers.IO)
 
@@ -111,7 +118,13 @@ class MainRepositoryImpl @Inject constructor(
 				onError(message)
 			}
 		}.onException {
-			onError(this.message.toString())
+			if (exception is IOException) {
+				// Handle network-related errors
+				onError("Unable to connect to the server. Please check your internet connection.")
+			} else {
+				// Handle other types of errors
+				onError("An unexpected error occurred.")
+			}
 		}
 	}.flowOn(Dispatchers.IO)
 
@@ -138,7 +151,13 @@ class MainRepositoryImpl @Inject constructor(
 				onError(message)
 			}
 		}.onException {
-			onError(this.message.toString())
+			if (exception is IOException) {
+				// Handle network-related errors
+				onError("Unable to connect to the server. Please check your internet connection.")
+			} else {
+				// Handle other types of errors
+				onError("An unexpected error occurred.")
+			}
 		}
 	}.flowOn(Dispatchers.IO)
 
@@ -165,7 +184,13 @@ class MainRepositoryImpl @Inject constructor(
 				onError(message)
 			}
 		}.onException {
-			onError(this.message.toString())
+			if (exception is IOException) {
+				// Handle network-related errors
+				onError("Unable to connect to the server. Please check your internet connection.")
+			} else {
+				// Handle other types of errors
+				onError("An unexpected error occurred.")
+			}
 		}
 	}.flowOn(Dispatchers.IO)
 

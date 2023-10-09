@@ -29,7 +29,7 @@ data class AuthorDetails(
 	val name: String? = null,
 
 	@Json(name="rating")
-	val rating: Double? = null,
+	val rating: Double?,
 
 	@Json(name="username")
 	val username: String? = null
@@ -38,7 +38,7 @@ data class AuthorDetails(
 data class ResultsItem(
 
 	@Json(name="author_details")
-	val authorDetails: AuthorDetails? = null,
+	val author_details: AuthorDetails? = null,
 
 	@Json(name="updated_at")
 	val updatedAt: String? = null,

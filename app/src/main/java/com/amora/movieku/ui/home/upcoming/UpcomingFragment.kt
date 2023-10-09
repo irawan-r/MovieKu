@@ -71,6 +71,16 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 			}
 
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
+
+				launch {
+					// to make the newer data from pagination will make the recyclerview scrolled to newer data position
+					adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
+						old.prepend.endOfPaginationReached == new.prepend.endOfPaginationReached
+					}
+						.filter { it.refresh is LoadState.NotLoading && it.prepend.endOfPaginationReached }
+						.collect { binding?.rvUpcomingMovies?.scrollToPosition(0) }
+				}
+
 				launch {
 					viewModel.moviesState.onEach { state ->
 						when (state) {
@@ -98,12 +108,6 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 									lifecycle,
 									state.data ?: PagingData.empty()
 								)
-								// to make the newer data from pagination will make the recyclerview scrolled to newer data position
-								adapterMovies.loadStateFlow.distinctUntilChanged { old, new ->
-									old.prepend.endOfPaginationReached == new.prepend.endOfPaginationReached
-								}
-									.filter { it.refresh is LoadState.NotLoading && it.prepend.endOfPaginationReached }
-									.collect { binding?.rvUpcomingMovies?.scrollToPosition(0) }
 							}
 
 							else -> {

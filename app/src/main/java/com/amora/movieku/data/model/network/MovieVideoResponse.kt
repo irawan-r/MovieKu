@@ -7,7 +7,7 @@ data class MovieVideoResponse(
 	@Json(name="page")
 	val page: Int,
 
-	@Json(name="totalPages")
+	@Json(name="total_pages")
 	val totalPages: Int,
 
 	@Json(name="results")
