@@ -62,11 +62,13 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 			launch {
 				repeatOnLifecycle(Lifecycle.State.RESUMED) {
 					viewModel.getMoviesPopular()
+					binding?.rvPopularMovies?.scrollToPosition(0)
 				}
 			}
 
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
 				viewModel.getMoviesPopular()
+				binding?.rvPopularMovies?.scrollToPosition(0)
 				launch {
 					adapterMovies.loadStateFlow.onEach { loadStates ->
 						when {
