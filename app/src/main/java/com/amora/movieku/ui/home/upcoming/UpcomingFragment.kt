@@ -67,7 +67,6 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 		lifecycleScope.launch {
 			launch {
 				repeatOnLifecycle(Lifecycle.State.RESUMED) {
-					viewModel.getUpcomingMovies()
 					binding?.rvUpcomingMovies?.scrollToPosition(0)
 				}
 			}

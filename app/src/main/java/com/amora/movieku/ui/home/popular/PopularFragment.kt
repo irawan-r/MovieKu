@@ -62,7 +62,6 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 
 			launch {
 				repeatOnLifecycle(Lifecycle.State.RESUMED) {
-					viewModel.getMoviesPopular()
 					binding?.rvPopularMovies?.scrollToPosition(0)
 				}
 			}
