@@ -61,27 +61,27 @@ data class Movie(
 		}
 		fun Movie.toPopularEntity(): MoviePopularEntity {
 			return MoviePopularEntity(
-				overview = overview,
-				title = title,
-				popularity = popularity,
-				voteAverage = voteAverage,
-				id = id,
-				voteCount = vote_count,
-				posterPath = poster_path,
-				releaseDate = releaseDate
-			)
+                overview = overview,
+                title = title,
+                posterPath = poster_path,
+                releaseDate = releaseDate,
+                popularity = popularity,
+                voteAverage = voteAverage,
+				remoteId = id,
+                voteCount = vote_count
+            )
 		}
 
 		fun Movie.toUpcomingEntity(): MovieUpcomingEntity {
 			return MovieUpcomingEntity(
 				overview = overview,
 				title = title,
+				posterPath = poster_path,
+				releaseDate = releaseDate,
 				popularity = popularity,
 				voteAverage = voteAverage,
-				id = id,
-				voteCount = vote_count,
-				posterPath = poster_path,
-				releaseDate = releaseDate
+				remoteId = id,
+				voteCount = vote_count
 			)
 		}
 	}

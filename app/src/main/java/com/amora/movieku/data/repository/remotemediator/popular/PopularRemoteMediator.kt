@@ -59,7 +59,7 @@ class PopularRemoteMediator @Inject constructor(
 				val prevKey = if (page == 1) null else page!! - 1
 				val nextKey = if (endOfPaginationReached) null else page!! + 1
 				val keys = data.toPopularEntity().map {
-					RemoteKeysPopular(id = it.id, prevKey = prevKey, nextKey = nextKey)
+					RemoteKeysPopular(id = it.remoteId, prevKey = prevKey, nextKey = nextKey)
 				}
 				database.movieDao().insertMoviesPopularList(data.toPopularEntity())
 				database.remoteKeysDao().insertAllKeysPopular(keys)
@@ -72,17 +72,17 @@ class PopularRemoteMediator @Inject constructor(
 
 	private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, MoviePopularEntity>): RemoteKeysPopular? {
 		return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { data ->
-			database.remoteKeysDao().getRemoteKeysPopularId(data.id)
+			database.remoteKeysDao().getRemoteKeysPopularId(data.remoteId)
 		}
 	}
 	private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, MoviePopularEntity>): RemoteKeysPopular? {
 		return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let { data ->
-			database.remoteKeysDao().getRemoteKeysPopularId(data.id)
+			database.remoteKeysDao().getRemoteKeysPopularId(data.remoteId)
 		}
 	}
 	private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, MoviePopularEntity>): RemoteKeysPopular? {
 		return state.anchorPosition?.let { position ->
-			state.closestItemToPosition(position)?.id?.let { id ->
+			state.closestItemToPosition(position)?.remoteId?.let { id ->
 				database.remoteKeysDao().getRemoteKeysPopularId(id)
 			}
 		}

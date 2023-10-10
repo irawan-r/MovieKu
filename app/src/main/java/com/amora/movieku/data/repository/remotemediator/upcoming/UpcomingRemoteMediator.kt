@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.amora.movieku.data.model.network.MovieResponse.Companion.toPopularEntity
 import com.amora.movieku.data.model.network.MovieResponse.Companion.toUpcomingEntity
 import com.amora.movieku.data.model.network.RemoteKeysUpcoming
 import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
@@ -58,8 +59,8 @@ class UpcomingRemoteMediator @Inject constructor(
 				}
 				val prevKey = if (page == 1) null else page!! - 1
 				val nextKey = if (endOfPaginationReached) null else page!! + 1
-				val keys = responseData.results.map {
-					RemoteKeysUpcoming(id = it.id, prevKey = prevKey, nextKey = nextKey)
+				val keys = data.toUpcomingEntity().map {
+					RemoteKeysUpcoming(id = it.remoteId, prevKey = prevKey, nextKey = nextKey)
 				}
 				database.remoteKeysDao().insertAllKeysUpcoming(keys)
 				database.movieDao().insertMoviesUpcomingList(data.toUpcomingEntity())
@@ -72,17 +73,17 @@ class UpcomingRemoteMediator @Inject constructor(
 
 	private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, MovieUpcomingEntity>): RemoteKeysUpcoming? {
 		return state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { data ->
-			database.remoteKeysDao().getRemoteKeysUpcomingId(data.id)
+			database.remoteKeysDao().getRemoteKeysUpcomingId(data.remoteId)
 		}
 	}
 	private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, MovieUpcomingEntity>): RemoteKeysUpcoming? {
 		return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()?.let { data ->
-			database.remoteKeysDao().getRemoteKeysUpcomingId(data.id)
+			database.remoteKeysDao().getRemoteKeysUpcomingId(data.remoteId)
 		}
 	}
 	private suspend fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, MovieUpcomingEntity>): RemoteKeysUpcoming? {
 		return state.anchorPosition?.let { position ->
-			state.closestItemToPosition(position)?.id?.let { id ->
+			state.closestItemToPosition(position)?.remoteId?.let { id ->
 				database.remoteKeysDao().getRemoteKeysUpcomingId(id)
 			}
 		}

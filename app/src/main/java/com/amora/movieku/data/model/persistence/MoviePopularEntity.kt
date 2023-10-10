@@ -17,8 +17,10 @@ data class MoviePopularEntity(
 
 	val voteAverage: Int? = null,
 
-	@PrimaryKey
-	val id: Long,
+	@PrimaryKey(autoGenerate = true)
+	val id: Long = 0L,
+
+	val remoteId: Long,
 
 	val voteCount: Int? = null
 )

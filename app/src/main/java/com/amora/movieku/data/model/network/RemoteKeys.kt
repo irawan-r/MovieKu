@@ -5,14 +5,16 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "remote_keys_popular")
 data class RemoteKeysPopular(
-	@PrimaryKey val id: Long,
+	@PrimaryKey(autoGenerate = true)
+	val id: Long,
 	val prevKey: Int?,
 	val nextKey: Int?
 )
 
 @Entity(tableName = "remote_keys_upcoming")
 data class RemoteKeysUpcoming(
-	@PrimaryKey val id: Long,
+	@PrimaryKey(autoGenerate = true)
+	val id: Long,
 	val prevKey: Int?,
 	val nextKey: Int?
 )
