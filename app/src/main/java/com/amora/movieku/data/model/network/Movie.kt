@@ -40,7 +40,7 @@ data class Movie(
 				title = title,
 				popularity = popularity,
 				voteAverage = voteAverage,
-				id = id,
+				id = remoteId,
 				vote_count = voteCount,
 				poster_path = posterPath,
 				releaseDate = releaseDate
@@ -53,7 +53,7 @@ data class Movie(
 				title = title,
 				popularity = popularity,
 				voteAverage = voteAverage,
-				id = id,
+				id = remoteId,
 				vote_count = voteCount,
 				poster_path = posterPath,
 				releaseDate = releaseDate
