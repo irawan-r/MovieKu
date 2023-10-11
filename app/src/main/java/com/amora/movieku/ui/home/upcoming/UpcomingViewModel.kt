@@ -2,6 +2,8 @@ package com.amora.movieku.ui.home.upcoming
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -23,24 +25,23 @@ class UpcomingViewModel @Inject constructor(
 	private val repository: MainRepository
 ) : ViewModel() {
 
-	private val _moviesState = MutableStateFlow<State<PagingData<Movie>>>(State.Empty())
+	private val _moviesState = MutableStateFlow<PagingData<Movie>>(PagingData.empty())
 	val moviesState = _moviesState.asStateFlow()
 
-	fun resetState() {
-		_moviesState.update {
-			State.Empty()
-		}
+	private val _adapterState: MutableStateFlow<CombinedLoadStates?> = MutableStateFlow(null)
+	val adapterState = _adapterState.asStateFlow()
+
+	fun updateAdapterState(state: CombinedLoadStates?) {
+		_adapterState.update { state }
 	}
 
 	fun getUpcomingMovies() {
 		viewModelScope.launch {
 			repository.getUpcomingMovies().cachedIn(viewModelScope)
-				.onStart { _moviesState.update { State.Loading() } }
-				.onEmpty { _moviesState.update { State.Loading() } }
 				.collect { response ->
 					_moviesState.update {
 						val data = response.map { it.toMovie() }
-						State.Success(data)
+						data
 					}
 				}
 		}

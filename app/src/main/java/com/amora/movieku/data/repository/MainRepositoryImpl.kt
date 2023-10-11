@@ -15,6 +15,8 @@ import com.amora.movieku.data.persistence.AppDatabase
 import com.amora.movieku.network.ApiService
 import com.amora.movieku.data.repository.remotemediator.popular.PopularRemoteMediator
 import com.amora.movieku.data.repository.remotemediator.upcoming.UpcomingRemoteMediator
+import com.amora.movieku.utils.Constant.NO_CONNECTION
+import com.amora.movieku.utils.Constant.UNEXPECTED_ERROR
 import com.google.android.material.color.utilities.MaterialDynamicColors.onError
 import com.google.gson.Gson
 import com.skydoves.sandwich.message
@@ -85,10 +87,10 @@ class MainRepositoryImpl @Inject constructor(
 		}.onException {
 			if (exception is IOException) {
 				// Handle network-related errors
-				onError("Unable to connect to the server. Please check your internet connection.")
+				onError(NO_CONNECTION)
 			} else {
 				// Handle other types of errors
-				onError("An unexpected error occurred.")
+				onError(UNEXPECTED_ERROR)
 			}
 		}
 	}.flowOn(Dispatchers.IO)
@@ -118,10 +120,10 @@ class MainRepositoryImpl @Inject constructor(
 		}.onException {
 			if (exception is IOException) {
 				// Handle network-related errors
-				onError("Unable to connect to the server. Please check your internet connection.")
+				onError(NO_CONNECTION)
 			} else {
 				// Handle other types of errors
-				onError("An unexpected error occurred.")
+				onError(UNEXPECTED_ERROR)
 			}
 		}
 	}.flowOn(Dispatchers.IO)
@@ -151,10 +153,10 @@ class MainRepositoryImpl @Inject constructor(
 		}.onException {
 			if (exception is IOException) {
 				// Handle network-related errors
-				onError("Unable to connect to the server. Please check your internet connection.")
+				onError(NO_CONNECTION)
 			} else {
 				// Handle other types of errors
-				onError("An unexpected error occurred.")
+				onError(UNEXPECTED_ERROR)
 			}
 		}
 	}.flowOn(Dispatchers.IO)
@@ -184,10 +186,10 @@ class MainRepositoryImpl @Inject constructor(
 		}.onException {
 			if (exception is IOException) {
 				// Handle network-related errors
-				onError("Unable to connect to the server. Please check your internet connection.")
+				onError(NO_CONNECTION)
 			} else {
 				// Handle other types of errors
-				onError("An unexpected error occurred.")
+				onError(UNEXPECTED_ERROR)
 			}
 		}
 	}.flowOn(Dispatchers.IO)

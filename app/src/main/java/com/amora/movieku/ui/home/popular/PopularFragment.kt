@@ -3,32 +3,26 @@ package com.amora.movieku.ui.home.popular
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.amora.movieku.MainActivity
 import com.amora.movieku.R
-import com.amora.movieku.data.State
 import com.amora.movieku.data.model.network.Movie
 import com.amora.movieku.databinding.FragmentPopularBinding
 import com.amora.movieku.ui.adapter.LoadingStateAdapter
 import com.amora.movieku.ui.adapter.PagingMoviesAdapter
 import com.amora.movieku.ui.base.BaseFragment
 import com.amora.movieku.ui.detail.DetailViewModel
+import com.amora.movieku.utils.Constant.NO_CONNECTION
+import com.amora.movieku.utils.isNetworkError
 import com.amora.movieku.utils.showSnackbarNotice
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -69,73 +63,52 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 			repeatOnLifecycle(Lifecycle.State.CREATED) {
 				viewModel.getMoviesPopular()
 				binding?.rvPopularMovies?.scrollToPosition(0)
-				launch {
-					adapterMovies.addLoadStateListener { loadState ->
-						// Only show the list if refresh succeeds.
-						binding?.rvPopularMovies?.isVisible = loadState.source.refresh is LoadState.NotLoading
-						// Show loading spinner during initial load or refresh.
-						loadingState(loadState.source.refresh is LoadState.Loading)
-						// Show the retry state if initial load or refresh fails.
-						//binding.retryButton.isVisible = loadState.source.refresh is LoadState.Error
 
-						// Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-						val errorState = loadState.source.append as? LoadState.Error
-							?: loadState.source.prepend as? LoadState.Error
-							?: loadState.append as? LoadState.Error
-							?: loadState.prepend as? LoadState.Error
-						errorState?.let {
-							Toast.makeText(
-								context,
-								"\uD83D\uDE28 Wooops ${it.error}",
-								Toast.LENGTH_LONG
-							).show()
-						}
-					}
-				}
+				adapterMovies.loadStateFlow.onEach { loadStates ->
+						val refreshState = loadStates.mediator?.refresh
+						when (refreshState) {
+							is LoadState.Loading -> {
+								loadingState(true)
+							}
+							is LoadState.NotLoading -> {
+								loadingState(false)
+							}
+							is LoadState.Error -> {
+								loadingState(false)
+								handleMediatorErrorState(refreshState)
+							}
 
-				launch {
-					viewModel.moviesState.onEach { state ->
-							when (state) {
-								is State.Loading -> {
-
-								}
-
-								is State.Error -> {
-
-									binding?.swipeRefresh?.isRefreshing = false
-									val messageApi = state.data.toString()
-									val message = state.message
-									if (message != null) {
-										binding?.root?.showSnackbarNotice(message)
-									} else {
-										binding?.root?.showSnackbarNotice(messageApi)
-									}
-								}
-
-								is State.Success -> {
-									binding?.swipeRefresh?.isRefreshing = false
-									adapterMovies.submitData(
-										lifecycle,
-										state.data ?: PagingData.empty()
-									)
-								}
-
-								else -> {
-
-								}
+							else -> {
+								loadingState(false)
 							}
 						}
-						.onCompletion {
-							viewModel.resetState()
-						}.collect()
+					}.launchIn(lifecycleScope)
+
+
+				launch {
+					viewModel.moviesState.collect { data ->
+						adapterMovies.submitData(lifecycle, data)
+					}
 				}
 			}
 		}
 	}
 
+	private fun handleMediatorErrorState(errorState: LoadState.Error) {
+		// Check for network-related errors
+		if (isNetworkError(errorState)) {
+			// Show Snackbar for no internet connection
+			binding?.root?.showSnackbarNotice(NO_CONNECTION)
+		} else {
+			// Show Snackbar for other errors
+			binding?.root?.showSnackbarNotice(errorState.error.localizedMessage)
+		}
+	}
+
+
 	private fun loadingState(toggle: Boolean) {
 		binding?.apply {
-			progressBar.isVisible = toggle
+			swipeRefresh.isRefreshing = toggle
 		}
 	}
 

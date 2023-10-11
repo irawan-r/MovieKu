@@ -7,6 +7,8 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.amora.movieku.databinding.ItemLoadingBinding
+import com.amora.movieku.utils.Constant.NO_CONNECTION
+import java.io.IOException
 
 class LoadingStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<LoadingStateAdapter.LoadingStateViewHolder>() {
 	override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): LoadingStateViewHolder {
@@ -23,8 +25,13 @@ class LoadingStateAdapter(private val retry: () -> Unit) : LoadStateAdapter<Load
 		}
 		fun bind(loadState: LoadState) {
 			if (loadState is LoadState.Error) {
-				binding.errorMsg.text = loadState.error.localizedMessage
+				if (loadState.error is IOException) {
+					binding.errorMsg.text = NO_CONNECTION
+				} else {
+					binding.errorMsg.text = loadState.error.localizedMessage
+				}
 			}
+
 			binding.progressBar.isVisible = loadState is LoadState.Loading
 			binding.retryButton.isVisible = loadState is LoadState.Error
 			binding.errorMsg.isVisible = loadState is LoadState.Error

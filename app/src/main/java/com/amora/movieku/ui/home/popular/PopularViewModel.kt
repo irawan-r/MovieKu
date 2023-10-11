@@ -25,24 +25,16 @@ class PopularViewModel @Inject constructor(
 	private val repository: MainRepository
 ) : ViewModel() {
 
-	private val _moviesState = MutableStateFlow<State<PagingData<Movie>>>(State.Empty())
+	private val _moviesState = MutableStateFlow<PagingData<Movie>>(PagingData.empty())
 	val moviesState = _moviesState.asStateFlow()
-
-	fun resetState() {
-		_moviesState.update {
-			State.Empty()
-		}
-	}
 
 	fun getMoviesPopular() {
 		viewModelScope.launch {
 			repository.getPopularMovies().cachedIn(viewModelScope)
-				.onStart { _moviesState.update { State.Loading() } }
-				.onEmpty { _moviesState.update { State.Loading() } }
 				.collect { response ->
 					_moviesState.update {
 						val data = response.map { it.toMovie() }
-						State.Success(data)
+						data
 					}
 				}
 		}
