@@ -84,7 +84,7 @@ class UpcomingFragment : BaseFragment<FragmentUpcomingBinding, UpcomingViewModel
 
 							is LoadState.Error -> {
 								loadingState(false)
-								handleMediatorErrorState(refreshState)
+								//handleMediatorErrorState(refreshState)
 							}
 
 							else -> {

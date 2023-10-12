@@ -75,7 +75,7 @@ class PopularFragment : BaseFragment<FragmentPopularBinding, PopularViewModel>()
 							}
 							is LoadState.Error -> {
 								loadingState(false)
-								handleMediatorErrorState(refreshState)
+								//handleMediatorErrorState(refreshState)
 							}
 
 							else -> {
