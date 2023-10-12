@@ -78,9 +78,8 @@ class PopularViewModelTest {
 		verify(repository).getPopularMovies()
 
 		val actualData = dashboardViewModel.moviesState.first()
-		differ.submitData(actualData.data!!)
+		differ.submitData(actualData)
 
-		assertTrue(actualData is State.Success)
 		assertNotNull(differ.snapshot())
 		assertEquals(dummyStories.size, differ.snapshot().size)
 		assertEquals(dummyStories[0], differ.snapshot()[0])
@@ -109,9 +108,8 @@ class PopularViewModelTest {
 		verify(repository).getPopularMovies()
 
 		val actualData = dashboardViewModel.moviesState.first()
-		differ.submitData(actualData.data!!)
+		differ.submitData(actualData)
 
-		assertTrue(actualData is State.Success)
 		assertNotNull(differ.snapshot())
 		assertEquals(emptyStories.size, differ.snapshot().size)
 	}

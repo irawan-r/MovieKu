@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.amora.movieku.data.model.network.Movie
+import com.amora.movieku.data.model.persistence.MovieFavoriteEntity
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
-import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
 
 @Dao
 interface MovieDao {
@@ -24,15 +24,18 @@ interface MovieDao {
 	@Query("DELETE FROM movie_popular")
 	suspend fun deleteMoviesPopularList()
 
+	@Query("SELECT * FROM movie_favorite where id = :id_")
+	suspend fun getMovieFavorite(id_: Long): Movie
+
+	@Query("SELECT * FROM movie_favorite")
+	suspend fun getMoviesFavorite(): List<Movie>
+
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	suspend fun insertMoviesUpcomingList(movie: List<MovieUpcomingEntity>)
+	suspend fun insertFavoriteMovies(movie: MovieFavoriteEntity)
 
-	@Query("SELECT * FROM movie_upcoming WHERE id = :id_")
-	suspend fun getMovieUpcoming(id_: Long): Movie
+	@Query("DELETE FROM movie_favorite WHERE id = :id_")
+	suspend fun deleteFavoriteMovie(id_: Long)
 
-	@Query("SELECT * FROM movie_upcoming")
-	fun getMoviesUpcomingList(): PagingSource<Int, MovieUpcomingEntity>
-
-	@Query("DELETE FROM movie_upcoming")
-	suspend fun deleteMoviesUpcomingList()
+	@Query("DELETE FROM movie_favorite")
+	suspend fun deleteFavoriteMovies()
 }

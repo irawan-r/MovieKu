@@ -48,7 +48,7 @@ data class MovieDetailEntity(
 	@Json(name="release_date")
 	val releaseDate: String? = null,
 
-	@Json(name="vote_average")
+	@Json(name="voteAverage")
 	val voteAverage: Int? = null,
 
 	@Json(name="tagline")

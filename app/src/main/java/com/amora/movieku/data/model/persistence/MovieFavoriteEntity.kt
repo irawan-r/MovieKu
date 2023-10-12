@@ -3,9 +3,12 @@ package com.amora.movieku.data.model.persistence
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.amora.movieku.data.model.network.Movie
+import com.amora.movieku.data.model.network.Movie.Companion.toMovie
+import com.amora.movieku.data.model.persistence.MovieFavoriteEntity.Companion.toMovie
 
-@Entity(tableName = "movie_popular")
-data class MoviePopularEntity(
+@Entity(tableName = "movie_favorite")
+data class MovieFavoriteEntity(
 	val overview: String? = null,
 
 	val title: String? = null,
@@ -28,4 +31,10 @@ data class MoviePopularEntity(
 
 	@ColumnInfo(name = "vote_count")
 	val voteCount: Int? = null
-)
+) {
+	companion object {
+		fun List<MovieFavoriteEntity>.toMovie(): List<Movie> {
+			return this.map { it.toMovie() }
+		}
+	}
+}

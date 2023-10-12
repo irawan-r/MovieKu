@@ -17,10 +17,10 @@ data class MovieDetail(
 	val genres: List<Genres?>? = null,
 
 	@Json(name="popularity")
-	val popularity: Any? = null,
+	val popularity: Double? = null,
 
 	@Json(name="id")
-	val id: Int? = null,
+	val id: Long? = null,
 
 	@Json(name="vote_count")
 	val vote_count: Int? = null,
@@ -43,8 +43,8 @@ data class MovieDetail(
 	@Json(name="release_date")
 	val release_date: String? = null,
 
-	@Json(name="vote_average")
-	val vote_average: Any? = null,
+	@Json(name="voteAverage")
+	val vote_average: Double? = null,
 
 	@Json(name="tagline")
 	val tagline: String? = null,

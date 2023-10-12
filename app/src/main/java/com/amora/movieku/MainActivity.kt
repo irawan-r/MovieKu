@@ -15,7 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.amora.movieku.databinding.ActivityMainBinding
 import com.amora.movieku.ui.home.popular.PopularFragment
-import com.amora.movieku.ui.home.upcoming.UpcomingFragment
+import com.amora.movieku.ui.home.favorite.FavoriteFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 	private val mainCoroutine = CoroutineScope(Dispatchers.Main)
 	private var backPressJob: Job? = null
 	private var popularFragment: PopularFragment? = null
-	private var upcomingFragment: UpcomingFragment? = null
+	private var favoriteFragment: FavoriteFragment? = null
 
 	private fun getAppBarToolbar() = binding.toolbar
 
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 		// menu should be considered as top level destinations.
 		val appBarConfiguration = AppBarConfiguration(
 			setOf(
-				R.id.navigation_upcoming, R.id.navigation_popular, R.id.navigation_search
+				R.id.navigation_favorite, R.id.navigation_popular, R.id.navigation_search
 			)
 		)
 		setupActionBarWithNavController(navController, appBarConfiguration)
@@ -89,8 +89,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 		popularFragment = fragment
 	}
 
-	fun setUpcomingFragment(fragment: UpcomingFragment) {
-		upcomingFragment = fragment
+	fun setUpcomingFragment(fragment: FavoriteFragment) {
+		favoriteFragment = fragment
 	}
 
 	override fun onDestinationChanged(

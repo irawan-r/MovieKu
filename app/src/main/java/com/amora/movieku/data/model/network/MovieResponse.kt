@@ -1,9 +1,9 @@
 package com.amora.movieku.data.model.network
 
 import com.amora.movieku.data.model.network.Movie.Companion.toPopularEntity
-import com.amora.movieku.data.model.network.Movie.Companion.toUpcomingEntity
+import com.amora.movieku.data.model.network.Movie.Companion.toFavoriteEntity
+import com.amora.movieku.data.model.persistence.MovieFavoriteEntity
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
-import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
 import com.squareup.moshi.Json
 
 data class MovieResponse(
@@ -17,16 +17,16 @@ data class MovieResponse(
 	@Json(name="results")
 	val results: List<Movie>,
 
-	@Json(name="totalResult")
-	val totalResult: Int
+	@Json(name="total_result")
+	val total_result: Int
 ) {
 	companion object {
 		fun List<Movie>.toPopularEntity(): List<MoviePopularEntity> {
 			return this.map { it.toPopularEntity() }
 		}
 
-		fun List<Movie>.toUpcomingEntity(): List<MovieUpcomingEntity> {
-			return this.map { it.toUpcomingEntity() }
+		fun List<Movie>.toFavoriteEntity(): List<MovieFavoriteEntity> {
+			return this.map { it.toFavoriteEntity() }
 		}
 	}
 }

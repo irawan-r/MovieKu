@@ -5,19 +5,20 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.amora.movieku.data.model.network.ErrorResponse
+import com.amora.movieku.data.model.network.Movie
+import com.amora.movieku.data.model.network.Movie.Companion.toFavoriteEntity
 import com.amora.movieku.data.model.network.MovieDetail
 import com.amora.movieku.data.model.network.MovieResponse
+import com.amora.movieku.data.model.network.MovieResponse.Companion.toFavoriteEntity
 import com.amora.movieku.data.model.network.MovieReviewsResponse
 import com.amora.movieku.data.model.network.MovieVideoResponse
+import com.amora.movieku.data.model.persistence.MovieFavoriteEntity
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
-import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
 import com.amora.movieku.data.persistence.AppDatabase
 import com.amora.movieku.network.ApiService
 import com.amora.movieku.data.repository.remotemediator.popular.PopularRemoteMediator
-import com.amora.movieku.data.repository.remotemediator.upcoming.UpcomingRemoteMediator
 import com.amora.movieku.utils.Constant.NO_CONNECTION
 import com.amora.movieku.utils.Constant.UNEXPECTED_ERROR
-import com.google.android.material.color.utilities.MaterialDynamicColors.onError
 import com.google.gson.Gson
 import com.skydoves.sandwich.message
 import com.skydoves.sandwich.onError
@@ -25,7 +26,6 @@ import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.suspendOnSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -49,17 +49,20 @@ class MainRepositoryImpl @Inject constructor(
 			emitAll(pager)
 		}
 
-	@OptIn(ExperimentalPagingApi::class)
-	override fun getUpcomingMovies(): Flow<PagingData<MovieUpcomingEntity>> = flow {
-		val pager = Pager(
-			config = PagingConfig(pageSize = 10),
-			remoteMediator = UpcomingRemoteMediator(database, apiService, 1),
-			pagingSourceFactory = {
-				database.movieDao().getMoviesUpcomingList()
-			}
-		)
+	override fun getFavoriteMovies(): Flow<List<MovieFavoriteEntity>> = flow {
+		emit(database.movieDao().getMoviesFavorite().toFavoriteEntity())
+	}
 
-		emitAll(pager.flow)
+	override suspend fun insertFavoriteMovie(movie: Movie) {
+		database.movieDao().insertFavoriteMovies(movie = movie.toFavoriteEntity())
+	}
+
+	override suspend fun deleteFavoriteMovie(movie: Movie) {
+		database.movieDao().deleteFavoriteMovie(movie.id)
+	}
+
+	override suspend fun getFavoriteMovie(idMovie: Long): Movie? {
+		return database.movieDao().getMovieFavorite(idMovie)
 	}
 
 	override fun searchMovies(

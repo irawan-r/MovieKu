@@ -1,6 +1,6 @@
 package com.amora.movieku.data.model.network
 
-import androidx.room.ColumnInfo
+import com.amora.movieku.data.model.persistence.MovieFavoriteEntity
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
 import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
 import com.squareup.moshi.Json
@@ -13,7 +13,6 @@ data class Movie(
 	val title: String? = null,
 
 	@field:Json(name="poster_path")
-	@ColumnInfo("poster_path")
 	val poster_path: String?,
 
 	@field:Json(name="release_date")
@@ -29,7 +28,6 @@ data class Movie(
 	val id: Long,
 
 	@field:Json(name="vote_count")
-	@ColumnInfo("vote_count")
 	val vote_count: Int? = null
 ) {
 	companion object {
@@ -72,8 +70,8 @@ data class Movie(
             )
 		}
 
-		fun Movie.toUpcomingEntity(): MovieUpcomingEntity {
-			return MovieUpcomingEntity(
+		fun Movie.toFavoriteEntity(): MovieFavoriteEntity {
+			return MovieFavoriteEntity(
 				overview = overview,
 				title = title,
 				posterPath = poster_path,
@@ -81,7 +79,21 @@ data class Movie(
 				popularity = popularity,
 				voteAverage = voteAverage,
 				remoteId = id,
-				voteCount = vote_count
+				voteCount = vote_count,
+				id = id
+			)
+		}
+
+		fun MovieFavoriteEntity.toMovie(): Movie {
+			return Movie(
+				overview = overview,
+				title = title,
+				popularity = popularity,
+				voteAverage = voteAverage,
+				id = remoteId,
+				vote_count = voteCount,
+				poster_path = posterPath,
+				releaseDate = releaseDate
 			)
 		}
 	}

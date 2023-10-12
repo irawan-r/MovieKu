@@ -13,6 +13,6 @@ data class MovieVideoResponse(
 	@Json(name="results")
 	val results: List<VideoMovie>,
 
-	@Json(name="totalResult")
+	@Json(name="total_result")
 	val totalResult: Int
 )

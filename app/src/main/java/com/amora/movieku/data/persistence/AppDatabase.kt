@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.amora.movieku.data.model.network.RemoteKeysPopular
 import com.amora.movieku.data.model.network.RemoteKeysUpcoming
 import com.amora.movieku.data.model.persistence.MovieDetailEntity
+import com.amora.movieku.data.model.persistence.MovieFavoriteEntity
 import com.amora.movieku.data.model.persistence.MoviePopularEntity
 import com.amora.movieku.data.model.persistence.MovieUpcomingEntity
 import com.amora.movieku.data.model.persistence.VideoMovieEntity
@@ -18,7 +19,8 @@ import com.amora.movieku.utils.Converters
 		RemoteKeysUpcoming::class,
 		RemoteKeysPopular::class,
 		VideoMovieEntity::class,
-		MovieDetailEntity::class
+		MovieDetailEntity::class,
+		MovieFavoriteEntity::class
 	],
 	version = 1,
 	exportSchema = true
